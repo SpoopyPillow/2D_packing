@@ -1,5 +1,6 @@
 import PIL.ImageDraw as ImageDraw
 import PIL.Image as Image
+import numpy as np
 
 from .circle import *
 
@@ -30,3 +31,15 @@ class CircleContainer:
             item.draw(draw, scale)
 
         return image
+
+    def elastic_energy(self):
+        total = 0
+        for item_i in self.items:
+            total += item_i.container_depth(self) ** 2
+            
+            for item_j in self.items:
+                if (item_i == item_j):
+                    continue
+                total += item_i.circle_depth(item_j) ** 2
+
+        return total
