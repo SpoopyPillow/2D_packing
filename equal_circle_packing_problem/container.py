@@ -32,14 +32,25 @@ class CircleContainer:
 
         return image
 
-    def elastic_energy(self):
+    def total_energy(self):
         total = 0
-        for item_i in self.items:
-            total += item_i.container_depth(self) ** 2
-            
-            for item_j in self.items:
-                if (item_i == item_j):
-                    continue
-                total += item_i.circle_depth(item_j) ** 2
+        for i in range(len(self.items)):
+            total += self.items[i].container_energy(self)
+
+            for j in range(i + 1, len(self.items)):
+                total += 2 * self.items[i].item_energy(self.items[j])
 
         return total
+
+    def gradient_energy(self):
+        partials = []
+        for i in range(len(self.items)):
+            partial = self.items[i].partial_container_energy(self)
+            for j in range(len(self.items)):
+                if i == j:
+                    continue
+                partial += self.items[i].partial_item_energy(self.items[j]) * 2
+
+            partials.append(partial)
+
+        return np.concatenate(partials)
