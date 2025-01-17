@@ -82,5 +82,5 @@ class CircleContainer:
 
             gradient_step = self.gradient_energy() - gradient
             inverse_hessian = self.step_inverse_hessian(inverse_hessian, position_step, gradient_step)
-        
+
         return False
