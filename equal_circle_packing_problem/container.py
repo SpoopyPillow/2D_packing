@@ -54,3 +54,33 @@ class CircleContainer:
             partials.append(partial)
 
         return np.concatenate(partials)
+
+    def step_inverse_hessian(self, inverse_hessian, position_step, gradient_step):
+        inner_product = np.inner(gradient_step, position_step)
+
+        return (
+            np.identity(inverse_hessian.shape[0]) - np.outer(position_step, gradient_step) / inner_product
+        ).dot(inverse_hessian).dot(
+            np.identity(inverse_hessian.shape[0]) - np.outer(gradient_step, position_step) / inner_product
+        ) + (
+            np.outer(position_step, position_step) / inner_product
+        )
+
+    def BFGS(self, learning_rate, iterations):
+        inverse_hessian = np.identity(2 * len(self.items))
+
+        for iteration in range(iterations):
+            gradient = self.gradient_energy()
+            direction = -1 * inverse_hessian.dot(gradient)
+
+            position_step = learning_rate * direction
+            for index, item in enumerate(self.items):
+                item.position += position_step[2 * index : 2 * index + 2]
+
+            if np.linalg.norm(gradient) < 10**-10:
+                return True
+
+            gradient_step = self.gradient_energy() - gradient
+            inverse_hessian = self.step_inverse_hessian(inverse_hessian, position_step, gradient_step)
+        
+        return False

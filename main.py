@@ -1,13 +1,13 @@
+import random
 from equal_circle_packing_problem.circle import *
 from equal_circle_packing_problem.container import *
 
-
-a = UnitCircle([10, 0])
-b = UnitCircle([9.5, 0.5])
-c = UnitCircle([0.5, -0.5])
-
-container = CircleContainer(10, [a, b, c])
+container_size = 10
+container = CircleContainer(
+    container_size,
+    [UnitCircle([random.randrange(-container_size, container_size) for j in range(2)]) for i in range(75)],
+)
 container.draw().show()
 
-print(container.total_energy())
-print(container.gradient_energy())
+print(container.BFGS(0.1, 1000))
+container.draw().show()
