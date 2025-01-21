@@ -1,19 +1,16 @@
 import random
-from equal_circle_packing_problem.circle import *
-from equal_circle_packing_problem.container import *
-from equal_circle_packing_problem.basin_hopping import *
+from experiment_pso.circle import *
+from experiment_pso.container import *
+from experiment_pso.pso import *
 
-container_size = 3.8
+container_size = 3
 container = CircleContainer(
     container_size,
-    [UnitCircle([random.uniform(-container_size, container_size) for j in range(2)]) for i in range(10)],
+    [UnitCircle([0, 0]) for i in range(4)],
 )
 
-container.BFGS(0.1, 100)
+position_global, fitness_global = minimize(container, 200, 1000, 0.9, 0.4, 1.5, 1.5)
+container.set_vector(position_global)
+print(fitness_global)
+print(container.fitness())
 container.draw().show()
-
-basin_hopping = BasinHopping(container, 0.4, 0.03, 10)
-layouts = basin_hopping.generate_layouts(0.1, 100)
-
-optimized = min(layouts, key=lambda container: container.total_energy())
-optimized.draw().show()
